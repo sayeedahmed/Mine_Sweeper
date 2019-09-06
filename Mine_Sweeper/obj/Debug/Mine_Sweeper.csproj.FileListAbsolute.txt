@@ -1,0 +1,15 @@
+C:\Users\ahmesa02\Downloads\Project\Personal\Mine_Sweeper\Mine_Sweeper\bin\Debug\Mine_Sweeper.exe.config
+C:\Users\ahmesa02\Downloads\Project\Personal\Mine_Sweeper\Mine_Sweeper\bin\Debug\Mine_Sweeper.exe
+C:\Users\ahmesa02\Downloads\Project\Personal\Mine_Sweeper\Mine_Sweeper\bin\Debug\Mine_Sweeper.pdb
+C:\Users\ahmesa02\Downloads\Project\Personal\Mine_Sweeper\Mine_Sweeper\bin\Debug\WpfAnimatedGif.dll
+C:\Users\ahmesa02\Downloads\Project\Personal\Mine_Sweeper\Mine_Sweeper\bin\Debug\WpfAnimatedGif.xml
+C:\Users\ahmesa02\Downloads\Project\Personal\Mine_Sweeper\Mine_Sweeper\obj\Debug\MineSweeper.g.cs
+C:\Users\ahmesa02\Downloads\Project\Personal\Mine_Sweeper\Mine_Sweeper\obj\Debug\App.g.cs
+C:\Users\ahmesa02\Downloads\Project\Personal\Mine_Sweeper\Mine_Sweeper\obj\Debug\Mine_Sweeper_MarkupCompile.cache
+C:\Users\ahmesa02\Downloads\Project\Personal\Mine_Sweeper\Mine_Sweeper\obj\Debug\Mine_Sweeper_MarkupCompile.lref
+C:\Users\ahmesa02\Downloads\Project\Personal\Mine_Sweeper\Mine_Sweeper\obj\Debug\MineSweeper.baml
+C:\Users\ahmesa02\Downloads\Project\Personal\Mine_Sweeper\Mine_Sweeper\obj\Debug\Mine_Sweeper.g.resources
+C:\Users\ahmesa02\Downloads\Project\Personal\Mine_Sweeper\Mine_Sweeper\obj\Debug\Mine_Sweeper.Properties.Resources.resources
+C:\Users\ahmesa02\Downloads\Project\Personal\Mine_Sweeper\Mine_Sweeper\obj\Debug\Mine_Sweeper.csproj.GenerateResource.Cache
+C:\Users\ahmesa02\Downloads\Project\Personal\Mine_Sweeper\Mine_Sweeper\obj\Debug\Mine_Sweeper.exe
+C:\Users\ahmesa02\Downloads\Project\Personal\Mine_Sweeper\Mine_Sweeper\obj\Debug\Mine_Sweeper.pdb
