@@ -5,14 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Mine_Sweeper"
         mc:Ignorable="d"
-        Icon="Resources/mine.bmp"
+        Icon="Resources/Images/mine.bmp"
         Title="MineSweeper" Height="550" Width="500" MinWidth="500" MinHeight="550">
     <Grid x:Name="gridApp">
-        <GroupBox x:Name="groupBoxDifficulty" Header="Difficulty" HorizontalAlignment="Left" Margin="50,22,0,0" VerticalAlignment="Top" Width="226" Height="60"/>
-        <RadioButton x:Name="radioButtonLow" Content="Newbie" HorizontalAlignment="Left" Margin="71,48,0,0" VerticalAlignment="Top" IsChecked="True"/>
-        <RadioButton x:Name="radioButtonMedium" Content="Amatuer" HorizontalAlignment="Left" Margin="142,48,0,0" VerticalAlignment="Top"/>
-        <RadioButton x:Name="radioButtonHigh" Content="Pro" HorizontalAlignment="Left" Margin="229,48,0,0" VerticalAlignment="Top"/>
-        <Button x:Name="buttonPlay" Content="Play" HorizontalAlignment="Left" Margin="310,34,0,0" VerticalAlignment="Top" Width="112" Height="48" Click="buttonPlay_Click">
+        <GroupBox x:Name="groupBoxDifficulty" Header="Difficulty" HorizontalAlignment="Left" Margin="50,18,0,0" VerticalAlignment="Top" Width="226" Height="60"/>
+        <RadioButton x:Name="radioButtonLow" Content="Newbie" HorizontalAlignment="Left" Margin="71,44,0,0" VerticalAlignment="Top" IsChecked="True"/>
+        <RadioButton x:Name="radioButtonMedium" Content="Amatuer" HorizontalAlignment="Left" Margin="142,44,0,0" VerticalAlignment="Top"/>
+        <RadioButton x:Name="radioButtonHigh" Content="Pro" HorizontalAlignment="Left" Margin="229,44,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="buttonPlay" Content="Play" HorizontalAlignment="Left" Margin="294,27,0,0" VerticalAlignment="Top" Width="112" Height="48" Click="buttonPlay_Click">
             <Button.Background>
                 <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
                     <GradientStop Color="#FFF3F3F3"/>
@@ -23,29 +23,39 @@
             </Button.Background>
         </Button>
         <Grid x:Name="layoutGrid" HorizontalAlignment="Left" Height="350" Margin="56,128,0,0" VerticalAlignment="Top" Width="350" MinWidth="350" MinHeight="353"/>
-        <Label x:Name="labelWon" Content="Won:" Margin="71,97,0,0" RenderTransformOrigin="0.219,0.609" HorizontalAlignment="Left" Width="38" Height="26" VerticalAlignment="Top"/>
-        <Label x:Name="labelWonScore" Content="0" Margin="109,97,0,0" RenderTransformOrigin="1.031,0.359" Height="26" VerticalAlignment="Top" HorizontalAlignment="Left" Width="16"/>
-        <Label x:Name="labelLost" Content="Lost:" Margin="145,97,0,0" RenderTransformOrigin="0.781,0.797" HorizontalAlignment="Left" Width="35" Height="26" VerticalAlignment="Top"/>
-        <Label x:Name="labelLostScore" Content="0" Margin="185,97,0,0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Left" Width="16"/>
-        <Label x:Name="textBlockContact" HorizontalAlignment="Right" Margin="0,0,78.6,2.4" VerticalAlignment="Bottom">
+        <Label x:Name="labelWon" Content="Won:" Margin="272,98,0,0" RenderTransformOrigin="0.495,0.515" HorizontalAlignment="Left" Width="42" Height="26" VerticalAlignment="Top" FontFamily="Meiryo" FontWeight="Bold"/>
+        <Label x:Name="labelWonScore" Content="0" Margin="311,98,0,0" RenderTransformOrigin="1.031,0.359" Height="26" VerticalAlignment="Top" HorizontalAlignment="Left" Width="28" FontFamily="Meiryo" FontWeight="Bold"/>
+        <Label x:Name="labelLost" Content="Lost:" Margin="344,98,0,0" RenderTransformOrigin="0.535,0.546" HorizontalAlignment="Left" Width="40" Height="26" VerticalAlignment="Top" FontFamily="Meiryo" FontWeight="Bold"/>
+        <Label x:Name="labelLostScore" Content="0" Margin="381,98,0,0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Left" Width="26" FontFamily="Meiryo" FontWeight="Bold"/>
+        <Label x:Name="textBlockContact" HorizontalAlignment="Right" Margin="0,0,81.6,2.4" VerticalAlignment="Bottom">
             <Hyperlink Click="Contact_Click" NavigateUri="mailto:sayeedahmed.1310@gmail.com?subject=MineSweeper App Feedback">
                 Contact Developer
             </Hyperlink>
         </Label>
+        <Image x:Name="imageFlag" Source="Resources/Images/flag.png" HorizontalAlignment="Left" Height="26" Margin="75,94,0,0" VerticalAlignment="Top" Width="26"/>
+        <Label x:Name="labelSeparator" Content=":" HorizontalAlignment="Left" Margin="101,94,0,0" VerticalAlignment="Top" FontFamily="Meiryo" FontSize="16" FontWeight="Bold"/>
+        <Label x:Name="labelFlagCounter" Content="0" HorizontalAlignment="Left" Margin="116,94,0,0" VerticalAlignment="Top" FontFamily="Meiryo" FontSize="16" FontWeight="Bold"/>
+        <Border BorderThickness="1" HorizontalAlignment="Left" Height="26" Margin="171,96,0,0" VerticalAlignment="Top" Width="73" Opacity="0.5" CornerRadius="5">
+            <Border.Background>
+                <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0" SpreadMethod="Repeat">
+                    <GradientStop Color="#FFF9F6F6" Offset="1"/>
+                    <GradientStop Color="#FF2952B1"/>
+                </LinearGradientBrush>
+            </Border.Background>
+            <Border.BorderBrush>
+                <RadialGradientBrush>
+                    <GradientStop Color="Black" Offset="0"/>
+                    <GradientStop Color="#FF9A4F4F" Offset="1"/>
+                </RadialGradientBrush>
+            </Border.BorderBrush>
+        </Border>
+        <Label x:Name="labelTimer" Content="00:00" HorizontalAlignment="Left" Margin="178,94,0,0" VerticalAlignment="Top" FontSize="16" FontFamily="Meiryo" FontWeight="Bold" Height="28"/>
+        <GroupBox x:Name="groupBoxScore" Header="Score" HorizontalAlignment="Left" Height="46" Margin="263,82,0,0" VerticalAlignment="Top" Width="144"/>
     </Grid>
     <Window.Resources>
         <Style x:Key="gridButtonStyle">
-            <!--<Setter Property="Control.FontSize" Value="18" />-->
-            <!--<Setter Property="Control.FontFamily" Value="Courier New" />-->
             <Setter Property="Control.Background" Value="BlueViolet" />
-            <!--BurlyWood-->
-            <!--<Setter Property="Control.Padding" Value="20px" />-->
-            <!--<Setter Property="Control.Background.LinearGradientBrush" Value="Green" />-->
-            <!--<Setter Property="Control.Foreground" Value="White" />-->
-            <!--<Setter Property="TextBox.TextAlignment" Value="Right" />-->
             <Setter Property="Control.Margin" Value="1" />
-            <!--<Setter Property="Control.BorderBrush" Value="1" />-->
-            <!--<Setter Property="Control.Width" Value="190" />-->
         </Style>
     </Window.Resources>
 </Window>

@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace Mine_Sweeper
 {
@@ -24,10 +25,19 @@ namespace Mine_Sweeper
         private int gamesWon = 0;
         private int gamesLost = 0;
         private int mineCount = 0;
+        private int flagCounter = 0;
         private int gridCount = 0;
         private int clickCount = 0;
         private int layoutDim = 0;
         private int fontSize = 20;
+        private int timerSeconds = 0;
+        private bool gameOver = false;
+        DispatcherTimer gameTimer = new System.Windows.Threading.DispatcherTimer();
+        DispatcherTimer gameMusicLooper = new System.Windows.Threading.DispatcherTimer();
+        private MediaPlayer eventSoundPlayer = new MediaPlayer();
+        private MediaPlayer gameLostSoundPlayer = new MediaPlayer();
+        private MediaPlayer gameBackgroundMusicPlayer = new MediaPlayer();
+        
         //private int diffcultyLevel = 0;
         private DifficultyLevel difficulty;
         private enum DifficultyLevel
@@ -38,10 +48,103 @@ namespace Mine_Sweeper
         };
         
         public MineSweeper()
-        {
+        {            
+            this.gameTimer.Tick += gameTimer_Tick;
+            this.gameTimer.Interval = new TimeSpan(0, 0, 1);
+            this.eventSoundPlayer.Volume = 100;
+
+            this.gameBackgroundMusicPlayer.MediaOpened += GameSoundPlayer_MediaOpened;
+            this.gameBackgroundMusicPlayer.Open(GetSourceURI("gameMusic"));
+            this.gameBackgroundMusicPlayer.Volume = 100;
+
+            this.gameBackgroundMusicPlayer.Play();
+
             InitializeComponent();
+            //this.buttonPlay_Click(buttonPlay, new RoutedEventArgs());
         }
 
+        private void GameSoundPlayer_MediaOpened(object sender, EventArgs e)
+        {
+            this.gameMusicLooper.Tick += gameMusicLooper_Tick;
+            this.gameMusicLooper.Interval = this.gameBackgroundMusicPlayer.NaturalDuration.TimeSpan;
+            this.gameMusicLooper.Start();
+        }
+        
+        private void gameTimer_Tick(object sender, EventArgs e)
+        {
+            this.timerSeconds++;
+            labelTimer.Content = (new TimeSpan(0, 0, this.timerSeconds)).ToString(@"mm\:ss");            
+        }
+
+        private void gameMusicLooper_Tick(object sender, EventArgs e)
+        {
+            this.gameBackgroundMusicPlayer.Stop();
+            if (this.gameOver == false)
+            {
+                this.gameBackgroundMusicPlayer.Play();
+            }
+        }
+
+        private Uri GetSourceURI(string soundEvent)
+        {
+            Uri sourceURI;
+
+            switch (soundEvent)
+            {
+                case "gameStart":
+                    sourceURI = new Uri("Resources/Sounds/gameStart.ogg", UriKind.Relative);
+                    break;
+                case "gameMusic":
+                    sourceURI = new Uri("Resources/Sounds/gameMusic.ogg", UriKind.Relative);
+                    break;
+                case "gameWon":
+                    sourceURI = new Uri("Resources/Sounds/gameWin.wav", UriKind.Relative);
+                    break;
+                case "gameLost":
+                    sourceURI = new Uri("Resources/Sounds/gameOver.wav", UriKind.Relative);
+                    break;
+                case "blast":
+                    //sourceURI = new Uri("Resources/Sounds/explode.aiff", UriKind.Relative);
+                    sourceURI = new Uri("Resources/Sounds/explosion.wav", UriKind.Relative);
+                    break;
+                case "flag":
+                    sourceURI = new Uri("Resources/Sounds/flag.wav", UriKind.Relative);
+                    break;
+                case "unflag":
+                    sourceURI = new Uri("Resources/Sounds/unflag.wav", UriKind.Relative);
+                    break;
+                case "click":
+                    sourceURI = new Uri("Resources/Sounds/click.wav", UriKind.Relative);
+                    break;
+
+                default:
+                    sourceURI = new Uri("");
+                    break;
+            }
+
+            return sourceURI;
+        }
+        
+        private async void PlayEventSound(string soundEvent)
+        {            
+            if (soundEvent == "gameLost")
+            {
+                await Task.Delay(1000);
+                
+                this.gameLostSoundPlayer.Open(GetSourceURI(soundEvent));
+                this.gameLostSoundPlayer.Play();
+            }
+            else
+            {
+                this.eventSoundPlayer.Stop();
+                if (soundEvent != "")
+                {
+                    this.eventSoundPlayer.Open(GetSourceURI(soundEvent));
+                    this.eventSoundPlayer.Play();
+                }
+            }            
+        }
+        
         private void setLayoutSizeAndLevelByDifficulty()
         {
             if ((bool)radioButtonLow.IsChecked)
@@ -105,12 +208,17 @@ namespace Mine_Sweeper
                 for (int c = 0; c < randCount; c++)
                 {
                     int randomRowCellIndex = random.Next(gridRow.Count);
-                    gridRow[randomRowCellIndex].isLandmine = true;
-                    this.mineCount++;
+                    if (gridRow[randomRowCellIndex].isLandmine == false)
+                    {
+                        gridRow[randomRowCellIndex].isLandmine = true;
+                        this.mineCount++;
+                    }                    
                 }
 
                 gridLayout.Add(gridRow);
             }
+
+            this.flagCounter = this.mineCount;
 
             this.ReassignWeights();
 
@@ -147,8 +255,43 @@ namespace Mine_Sweeper
             }
         }
 
-        private void buttonPlay_Click(object sender, RoutedEventArgs e)
+        private void DisplayAllButtonsContent()
         {
+            for (int iRow = 0; iRow < gridLayout.Count; iRow++)
+            {
+                for (int iCol = 0; iCol < gridLayout[0].Count; iCol++)
+                {
+                    if (!gridLayout[iRow][iCol].isLandmine)
+                    {
+                        string btnName = "button_" + iRow.ToString() + "_" + iCol.ToString();
+                        int btnIndex = (layoutDim * iRow) + iCol;
+                        Button btn = (Button)layoutGrid.Children[btnIndex];
+
+                        btn.Content = gridLayout[iRow][iCol].value.ToString();
+
+                    }
+                }
+            }
+        }
+
+        private void UpdateFlagCounter()
+        {
+            labelFlagCounter.Content = this.flagCounter.ToString();
+        }
+
+        private void buttonPlay_Click(object sender, RoutedEventArgs e)
+        {            
+            this.eventSoundPlayer.Close();
+            this.gameLostSoundPlayer.Close();
+            if (buttonPlay.Content.ToString() == "Reset")
+            {
+                this.gameBackgroundMusicPlayer.Stop();
+                this.gameBackgroundMusicPlayer.Play();
+            }            
+            this.gameTimer.Start();
+            this.gameOver = false;
+            this.timerSeconds = 0;
+            labelTimer.Content = "00:00";
             buttonPlay.Content = "Reset";
             labelWon.Background = Brushes.White;
             labelLost.Background = Brushes.White;            
@@ -156,9 +299,11 @@ namespace Mine_Sweeper
             layoutGrid.Children.Clear();
             layoutGrid.RowDefinitions.Clear();
             layoutGrid.ColumnDefinitions.Clear();
+            labelFlagCounter.Content = "0";
             this.gridCount = 0;
             this.mineCount = 0;
             this.clickCount = 0;
+            this.flagCounter = 0;
             setLayoutSizeAndLevelByDifficulty();
 
             for (int i = 0; i < this.layoutDim; i++)
@@ -189,40 +334,27 @@ namespace Mine_Sweeper
             }
 
             this.ResetGridLayoutByDifficulty();
-            /*
-            for (int iRow = 0; iRow < gridLayout.Count; iRow++)
-            {
-                for (int iCol = 0; iCol < gridLayout[0].Count; iCol++)
-                {
-                    if (!gridLayout[iRow][iCol].isLandmine)
-                    {
-                        string btnName = "button_" + iRow.ToString() + "_" + iCol.ToString();
-                        int btnIndex = (layoutDim * iRow) + iCol;
-                        Button btn = (Button)layoutGrid.Children[btnIndex];
+            this.UpdateFlagCounter();
 
-                        btn.Content = gridLayout[iRow][iCol].value.ToString();
-                        
-                    }
-                }
-            }
-            */
+            //this.DisplayAllButtonsContent();
+
         }
-        
+
         private Image getImageResource(string resourceType)
         {
             string resourcePath = "";
             switch (resourceType)
             {
                 case "flag":
-                    //resourcePath = "Resources/flag-zoomout.png";
-                    //resourcePath = "Resources/flag-zoomout-bg.png";
-                    resourcePath = "Resources/flag-zoomout-in-bg.png";
+                    //resourcePath = "Resources/Images/flag-zoomout.png";
+                    //resourcePath = "Resources/Images/flag-zoomout-bg.png";
+                    resourcePath = "Resources/Images/flag-zoomout-in-bg.png";
                     break;
                 case "mineBlast":
-                    resourcePath = "Resources/blast.gif";
+                    resourcePath = "Resources/Images/blast.gif";
                     break;
                 case "mine":                    
-                    resourcePath = "Resources/mine.png";
+                    resourcePath = "Resources/Images/mine-bg.png";
                     break;
                 default:
                     break;
@@ -353,13 +485,13 @@ namespace Mine_Sweeper
 
             return foregroundColor;
         }
-
-            
-
-    private void PressButton(Button btn)
+    
+        private void PressButton(Button btn)
         {
             if (btn == null || btn.IsEnabled == false) return;
-            
+
+            this.PlayEventSound("click");
+
             string btnName = btn.Name;
             
             string[] btnNameSplit = btnName.Split('_');
@@ -384,11 +516,15 @@ namespace Mine_Sweeper
                 if (this.clickCount == this.gridCount - this.mineCount)
                 {
                     // Game over! Game won!
+                    this.gameOver = true;
+                    this.gameBackgroundMusicPlayer.Stop();
+                    this.gameTimer.Stop();
                     this.gamesWon++;
                     this.labelWonScore.Content = (this.gamesWon).ToString();
                     layoutGrid.IsEnabled = false;
                     this.DisplayAllMines("Won", btn);
                     labelWon.Background = Brushes.LightGreen;
+                    this.PlayEventSound("gameWon");
                 }
                 else if (currentBlock.value == 0)
                 {
@@ -411,12 +547,18 @@ namespace Mine_Sweeper
             // else, update background image, end game, update score
             else
             {
+                this.gameOver = true;
+                this.gameBackgroundMusicPlayer.Stop();
+                this.gameTimer.Stop();
                 btn.Content = this.getImageResource("mineBlast");
                 this.gamesLost++;
                 this.labelLostScore.Content = (this.gamesLost).ToString();
                 layoutGrid.IsEnabled = false;
                 this.DisplayAllMines("Lost", btn);
                 labelLost.Background = Brushes.IndianRed;
+                this.PlayEventSound("blast");
+                //await Task.Delay(2000);
+                this.PlayEventSound("gameLost");
             }
         }
 
@@ -429,12 +571,20 @@ namespace Mine_Sweeper
         {
             if (((Button)sender).Content == null || ((Button)sender).Content == "")
             {
-                ((Button)sender).Content = this.getImageResource("flag");
+                if (this.flagCounter > 0)
+                {
+                    ((Button)sender).Content = this.getImageResource("flag");
+                    this.flagCounter--;
+                    this.PlayEventSound("flag");
+                }                
             }
             else
             {
                 ((Button)sender).Content = "";
-            }            
+                this.flagCounter++;
+                this.PlayEventSound("unflag");
+            }
+            this.UpdateFlagCounter();
         }
         
         private void Contact_Click(object sender, RoutedEventArgs e)
